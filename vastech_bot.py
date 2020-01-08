@@ -6,8 +6,9 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler, MessageHandler, Filters
 
 import alarms
-from gettemps import get_temperature, get_humidity
-from read_rpi1_yaml import get_chat_ids, get_own_name, get_sensor_names
+#from gettemps import get_temperature, get_humidity
+from read_rpi_yaml import get_chat_ids, get_own_name, get_sensor_names, get_sensor_type
+from get_internal_temps import read_internal_temp
 
 
 updater = Updater(token='955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA', use_context=True)
@@ -15,7 +16,8 @@ dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-chat_ids = get_chat_ids()
+yaml_file = "rpi2.yaml"
+chat_ids = get_chat_ids(yaml_file)
 
 def start(update, context):
     ''' Starts the bot. The response to the start command will contain the
@@ -46,21 +48,31 @@ def telegram_bot_sendtext(bot_message):
 
 def get_measurements(update, context):
     ''' Returns latest temperature and humidity measurements '''
-    temps = get_temperature()
-    hums = get_humidity()
-    sensors = get_sensor_names()
-    name = get_own_name()
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="MEASUREMENTS: Temperature - " + name +"\n" 
-                             + sensors[0] + ": " + str(temps[0]) + " deg C\n"
-                             + sensors[1] + ": " + str(temps[1]) + " deg C\n"
-                             + sensors[2] + ": " + str(temps[2]) + " deg C\n"
-                             + sensors[3] + ": " + str(temps[3]) + " deg C\n" 
-                             + "\nMEASUREMENTS: Humidity - " + name + ": \n"
-                             + sensors[0] + ": " + str(hums[0]) + " %\n" 
-                             + sensors[1] + ": " + str(hums[1]) + " %\n" 
-                             + sensors[2] + ": " + str(hums[2]) + " %\n" 
-                             + sensors[3] + ": " + str(hums[3]) + " %")
+    sensors = get_sensor_names(yaml_file)
+    name = get_own_name(yaml_file)
+    sensor = get_sensor_type(yaml_file)
+
+    if sensor == "sensirion ek-h4":
+        temps = get_temperature()
+        hums = get_humidity()
+        
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                text="MEASUREMENTS: Temperature - " + name +"\n" 
+                                + sensors[0] + ": " + str(temps[0]) + " deg C\n"
+                                + sensors[1] + ": " + str(temps[1]) + " deg C\n"
+                                + sensors[2] + ": " + str(temps[2]) + " deg C\n"
+                                + sensors[3] + ": " + str(temps[3]) + " deg C\n" 
+                                + "\nMEASUREMENTS: Humidity - " + name + ": \n"
+                                + sensors[0] + ": " + str(hums[0]) + " %\n" 
+                                + sensors[1] + ": " + str(hums[1]) + " %\n" 
+                                + sensors[2] + ": " + str(hums[2]) + " %\n" 
+                                + sensors[3] + ": " + str(hums[3]) + " %")
+
+    elif sensor == "internal":
+        temp = read_internal_temp
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                text="MEASUREMENTS: Temperature - " + name +"\n" 
+                                + sensors[0] + ": " + str(temp) + " deg C\n")
 
 def set_upper_thresh(update, context):
     ''' Set upper threshold for a sensor.
@@ -114,6 +126,5 @@ get_active_alarms_handler = CommandHandler('get_active_alarms', get_active_alarm
 dispatcher.add_handler(get_active_alarms_handler)
 sendmsg_handler = MessageHandler(Filters.all, sendmsg)
 dispatcher.add_handler(sendmsg_handler)
-
 
 updater.start_polling()

@@ -10,17 +10,18 @@
       and possibly incorrect alarms
 '''
 
-from read_rpi1_yaml import get_own_name, get_sensor_clear_thresholds, get_sensor_raise_thresholds
-from read_rpi1_yaml import set_sensor_raise_thresholds, set_sensor_clear_thresholds, get_sensor_alarms, get_alarm_names
+from read_rpi_yaml import get_own_name, get_sensor_clear_thresholds, get_sensor_raise_thresholds
+from read_rpi_yaml import set_sensor_raise_thresholds, set_sensor_clear_thresholds, get_sensor_alarms, get_alarm_names
 from vastech_bot import telegram_bot_sendtext
 
-name = get_own_name()
+yaml_file = "rpi2.yaml"
+name = get_own_name(yaml_file)
 sensor_up = [1, 1, 1, 1] # 1 = up, 0 = down
 sensor_flags = [0, 0, 0, 0] # 0 = alarm cleared, 1 = alarm raised
-sensor_thresholds_raise = get_sensor_raise_thresholds() # temperature at which to raise the alarm
-sensor_thresholds_clear = get_sensor_clear_thresholds() # temperature at which to clear the alarm
-all_alarms = get_sensor_alarms()
-alarm_names = get_alarm_names()
+sensor_thresholds_raise = get_sensor_raise_thresholds(yaml_file) # temperature at which to raise the alarm
+sensor_thresholds_clear = get_sensor_clear_thresholds(yaml_file) # temperature at which to clear the alarm
+all_alarms = get_sensor_alarms(yaml_file)
+alarm_names = get_alarm_names(yaml_file)
 over_temp_alarms = {}
 sensor_down_alarms = {}
 
@@ -115,11 +116,11 @@ def set_thresholds(threshold, sensor, value):
     if threshold == "upper":
         sensor_thresholds_raise[sensor - 1] = value
         print(sensor_thresholds_raise)
-        set_sensor_raise_thresholds(value, sensor)
+        set_sensor_raise_thresholds(value, sensor, yaml_file)
     elif threshold == "lower":
         sensor_thresholds_clear[sensor - 1] = value
         print(sensor_thresholds_clear)
-        set_sensor_clear_thresholds(value, sensor)
+        set_sensor_clear_thresholds(value, sensor, yaml_file)
 
 def get_alarms():
     ''' Returns a list of all alarms currently active '''

@@ -4,7 +4,7 @@ name: RaspberryPi1
 peers:
 - ip: 192.168.0.20
   name: RaspberryPi2
-sensor-type: sensirion ek-h4
+sensor-type: "sensirion ek-h4"
 sensors:
 - alarms:
   - message:
