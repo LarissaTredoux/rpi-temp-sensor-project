@@ -1,11 +1,11 @@
-# Raspberry Pi Temperature Sensor Network: Guide
+# Raspberry Pi Temperature Sensor Guide
 The aim of this project is to build a network of Raspberry Pi's that can be connected to a range of different sensors. The Raspberry Pi's take measurements from the sensors and raise alarms accordingly when undesirable sensor values are detected (the measurements are above a certain temperature/humidity threshold or maybe there's smoke somewhere...)
 
 The functionality is as follows:
-  - Read values from sensors. Currently the sensors that are supported are: the DHT-11 Temperature and Humidity sensor, the Raspberry Pi's internal CPU temperature sensor, and the Sensirion EK-H4 sensor with four nodes, each measuring temperature and humidity.
-  - A Prometheus Client page for each Raspberry Pi showing recent values from each sensor.
+  - Read values from sensors. Currently the sensors that are supported are: the DHT-11 Temperature and Humidity sensor, the Raspberry Pi's internal CPU temperature sensor, and the [Sensirion EK-H4] sensor with four nodes, each measuring temperature and humidity.
+  - A [Prometheus Client] page for each Raspberry Pi showing recent values from each sensor.
   - A Telegram bot for each Raspberry Pi that sends alert messages when alarms go off. The Telegram bot also allows commands to change threshold values for sensors, or get the most recent measurements from the sensors.
-  - A YAML configuration file for each Raspberry Pi that allows for changing alarm messages, sensor names, threshold values and more.
+  - A [YAML] configuration file for each Raspberry Pi that allows for changing alarm messages, sensor names, threshold values and more.
   - A peer check where each Raspberry Pi node checks if one or more other Raspberry Pi's are online.
   - Automatic startup when the Raspberry Pi boots.
 
@@ -22,7 +22,9 @@ First, you'll need to download the files onto a Raspberry Pi.
 $ git clone https://github.com/LarissaTredoux/vastech-rpi-project.git
 ```
 
-The Adafruit_DHT package needs to be installed for the [DHT-11] sensor. The YAML file needs to be edited according to your specific setup. For startup on boot, a [systemd] service file needs to be written with the following content:
+You'll need to install python packages for the [Telegram bot], [YAML] (`pip install pyyaml` is easiest) and [Prometheus Client].
+
+The [Adafruit_DHT] package needs to be installed for the DHT-11 sensor. The YAML file needs to be edited according to your specific setup. For startup on boot, a [systemd] service file needs to be written with the following content:
 
 ```sh
 1  [Unit]
@@ -132,7 +134,10 @@ Similarly, the code is designed for each Raspberry Pi to check the states of a m
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
-   [dht-11]: <http://www.circuitbasics.com/how-to-set-up-the-dht11-humidity-sensor-on-the-raspberry-pi/>
+   [sensirion ek-h4]: <https://github.com/SiLab-Bonn/basil/blob/master/basil/HL/sensirion_ekh4.py>
+   [yaml]: <https://github.com/yaml/pyyaml>
+   [prometheus client]: <https://github.com/prometheus/client_python>
+   [Adafruit_DHT]: <http://www.circuitbasics.com/how-to-set-up-the-dht11-humidity-sensor-on-the-raspberry-pi/>
    [systemd]: <https://www.raspberrypi.org/documentation/linux/usage/systemd.md>
    [telegram bot]: <https://github.com/python-telegram-bot/python-telegram-bot>
    [botfather]: <https://core.telegram.org/bots#6-botfather>
