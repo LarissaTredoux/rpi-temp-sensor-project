@@ -56,7 +56,7 @@ def sendmsg(update, context):
 def telegram_bot_sendtext(bot_message):
     ''' Sends a message to the user if their chat id is known '''
     global chat_ids
-    bot_token = '955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA'
+    bot_token = # Bot token
     for chat_id in chat_ids:
         bot_chatID = str(chat_id)
         send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
