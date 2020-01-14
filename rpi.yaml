@@ -1,0 +1,105 @@
+chat-ids:
+- 689946611
+- -1001449760343
+name: RaspberryPi1
+peers:
+- alarm:
+  - message:
+    - RaspberryPi2
+    - ': Down'
+    name: Peer Down
+  ip: 192.168.0.20
+  name: RaspberryPi2
+sensor-type: sensirion ek-h4
+sensors:
+- alarms:
+  - message:
+    - Sensor1
+    - ': Above '
+    - '100.0'
+    - ' deg C'
+    name: Over Threshold
+  - message:
+    - Sensor1
+    - ': Down'
+    name: Sensor Down
+  - message:
+    - Sensor1
+    - ': Out of bounds'
+    name: Sensor Out of Bounds
+  clear: 30.0
+  index: 1
+  measures: temperature
+  name: Sensor1
+  raise: 100.0
+  raise_str: '100.0'
+- alarms:
+  - message:
+    - Sensor2
+    - ': Above '
+    - '26'
+    - ' deg C'
+    name: Over Threshold
+  - message:
+    - Sensor2
+    - ': Down'
+    name: Sensor Down
+  - message:
+    - Sensor2
+    - ': Out of bounds'
+    name: Sensor Out of Bounds
+  clear: 24
+  index: 2
+  measures: temperature
+  name: Sensor2
+  raise: 26
+  raise_str: '26'
+- alarms:
+  - message:
+    - Sensor3
+    - ': Above '
+    - '27'
+    - ' deg C'
+    name: Over Threshold
+  - message:
+    - Sensor3
+    - ': Down'
+    name: Sensor Down
+  - message:
+    - Sensor3
+    - ': Out of bounds'
+    name: Sensor Out of Bounds
+  clear: 24
+  index: 3
+  measures: temperature
+  name: Sensor3
+  raise: 27
+  raise_str: '27'
+- alarms:
+  - message:
+    - Sensor4
+    - ': Above '
+    - '70'
+    - ' %'
+    name: Over Threshold
+  - message:
+    - Sensor4
+    - ': Down'
+    name: Sensor Down
+  - message:
+    - Sensor4
+    - ': Out of bounds'
+    name: Sensor Out of Bounds
+  clear: 67
+  index: 4
+  measures: humidity
+  name: Sensor4
+  raise: 70
+  raise_str: '70'
+shutdown-list:
+- ip: 172.16.100.2
+  password: abc
+  user: def
+- ip: 172.16.100.3
+  password: abca
+  user: asddfa

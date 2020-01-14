@@ -5,69 +5,78 @@ import threading
 from prometheus_client import start_http_server
 from prometheus_client.core import GaugeMetricFamily, CounterMetricFamily, REGISTRY
 
-#from gettemps import get_temperature, get_humidity
-from get_internal_temps import read_internal_temp
+from sensor_detect import get_measurements
 from alarms import alarm_check
-from read_rpi_yaml import get_sensor_type
+from read_rpi_yaml import get_peers, get_own_name, get_sensor_names, get_sensor_measures
+from peer_scraper import check_peer
+from vastech_bot import telegram_bot_sendtext
 
 class CustomCollector(object):
     ''' Builds a custom collector for temperature and humidity metrics '''
     def collect(self):
         ''' Get metrics for temperature and humidity measurements '''
 
-        sensor_type = get_sensor_type("rpi2.yaml")
+        sensors = get_sensor_names()
+        sensor_measures = get_sensor_measures()
+
         yield GaugeMetricFamily('up', '1 if Rpi is up', value=1)
 
-        if sensor_type == "sensirion ek-h4":
-            temps = get_temperature()
-            hums = get_humidity()
-            
-            c = CounterMetricFamily('sensor_temperature',
+        temp_metric_fam = CounterMetricFamily('sensor_temperature',
                                     'Temperature measured by each sensor', labels=['sensor'])
-            counter = 1
-            for t in temps:
-                if t is not None:
-                    c.add_metric([str(counter)], str(t))
-                counter += 1
-            yield c
 
-            c2 = CounterMetricFamily('sensor_humidity',
+        hum_metric_fam = CounterMetricFamily('sensor_humidity',
                                     'Humidity measured by each sensor', labels=['sensor'])
-            counter2 = 1
-            for h in hums:
-                if h is not None:
-                    c2.add_metric([str(counter2)], str(h))
-                counter2 += 1
-            yield c2
 
-        elif sensor_type == "internal":
-            temp = read_internal_temp()
-            c = CounterMetricFamily('sensor_temperature',
-                                    'Temperature measured by each sensor', labels=['sensor'])
-            if temp is not None:
-                c.add_metric([str(1)], str(temp))
+        sensor_num = 1
+        for sensor in sensors:
+            value = get_measurements(sensor_num)
+            if value is not None:
+                if sensor_measures[sensor_num - 1] == "humidity":
+                    hum_metric_fam.add_metric([str(sensor_num)], str(value))
+                elif sensor_measures[sensor_num - 1] == "temperature":
+                    temp_metric_fam.add_metric([str(sensor_num)], str(value))
+            sensor_num += 1
+
+        for item in sensor_measures:
+            if item == "temperature":
+                yield temp_metric_fam
+                break
+        for item in sensor_measures:
+            if item == "humidity":
+                yield hum_metric_fam
+                break
 
 
 class UpdateTemps(threading.Thread):
     ''' Update values for temperature and humidity, and wait a bit'''
     def run(self):
-        sensor_type = get_sensor_type("rpi2.yaml")
+        sensor_list = get_sensor_names()
+        peer_dict = get_peers()
         while True:
-            if sensor_type == "sensirion ek-h4":
-                get_humidity()
-                temps = get_temperature()
-                alarm_check(temps)
-            elif sensor_type == "internal":
-                temp = read_internal_temp()
-                temps = []
-                temps.append(temp)
-            alarm_check(temp)
+            sensor_vals = []
+            counter = 1
+            for sensor_item in sensor_list:
+                value = get_measurements(counter)
+                sensor_vals.append(value)
+            peer_states = []
+            for peer_ip in peer_dict.values():
+                online = check_peer('http://' + str(peer_ip)+ ':8000/')
+                peer_states.append(online)
+            alarm_check(sensor_vals, peer_states)
             time.sleep(10)
 
 
 if __name__ == '__main__':
     # Start up the server to expose the metrics.
+    name = get_own_name()
+    sensor_names = get_sensor_names()
     start_http_server(8000)
+    info = "INFO:\n" + "This device's name is: " + name + "\n"
+    info += "The sensors connected to this device are:\n"
+    for sensor_name in sensor_names:
+        info += sensor_name
+        info += "\n"
+    telegram_bot_sendtext(info)
     thred1 = UpdateTemps()
     thred1.start()
     REGISTRY.register(CustomCollector())

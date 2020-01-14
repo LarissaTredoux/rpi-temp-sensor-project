@@ -1,4 +1,5 @@
-''' VASTech bot to report on server room temperatures '''
+''' VASTech bot to report on server room temperatures
+    bot_token = '955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA' '''
 
 import logging
 import requests
@@ -6,18 +7,18 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler, MessageHandler, Filters
 
 import alarms
-#from gettemps import get_temperature, get_humidity
-from read_rpi_yaml import get_chat_ids, get_own_name, get_sensor_names, get_sensor_type
-from get_internal_temps import read_internal_temp
-
+from sensor_detect import get_measurements
+from read_rpi_yaml import get_chat_ids, get_own_name, get_sensor_names, get_sensor_measures
 
 updater = Updater(token='955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA', use_context=True)
 dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
-yaml_file = "rpi2.yaml"
-chat_ids = get_chat_ids(yaml_file)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+chat_ids = get_chat_ids()
 
 def start(update, context):
     ''' Starts the bot. The response to the start command will contain the
@@ -28,11 +29,29 @@ def start(update, context):
                              + str(update.effective_chat.id) + "; please add this to "
                              + "the config file so I can send you messages.")
 
+def help_cmd(update, context):
+    ''' Help message for the bot '''
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="I give information about sensors in the server rooms"
+                             + " and send alerts when alarms go off. \n\n"
+                             + "Type /start to get a message containing your chat id,"
+                             + " which you need to add to the config file. \n"
+                             + "Type /get_measurements to get the latest measurements"
+                             + " from the sensors.\n"
+                             + "Type /set_upper_threshold sensor_index new_threshold to change"
+                             + " the alarm-raise threshold for a sensor. \n"
+                             + "Type /set_lower_threshold sensor_index new_threshold to change"
+                             + " the alarm-clear threshold for a sensor. \n"
+                             + "Type /switch_off_server server_name to switch off"
+                             + " a specific server. \n"
+                             + "Type /get_active_alarms to get a list of all"
+                             + " currently active alarms.")
+
 def sendmsg(update, context):
     ''' Standard response to any unknown text message
         sent to the bot '''
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Hmm looks like there's nothing new to report right now.")
+                             text="Hmm looks like there's nothing new to report right now. /help")
 
 def telegram_bot_sendtext(bot_message):
     ''' Sends a message to the user if their chat id is known '''
@@ -46,37 +65,41 @@ def telegram_bot_sendtext(bot_message):
 
     return response.json()
 
-def get_measurements(update, context):
+def get_latest_measurements(update, context):
     ''' Returns latest temperature and humidity measurements '''
-    sensors = get_sensor_names(yaml_file)
-    name = get_own_name(yaml_file)
-    sensor = get_sensor_type(yaml_file)
+    sensors = get_sensor_names()
+    name = get_own_name()
+    sensor_measures = get_sensor_measures() 
 
-    if sensor == "sensirion ek-h4":
-        temps = get_temperature()
-        hums = get_humidity()
-        
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                text="MEASUREMENTS: Temperature - " + name +"\n" 
-                                + sensors[0] + ": " + str(temps[0]) + " deg C\n"
-                                + sensors[1] + ": " + str(temps[1]) + " deg C\n"
-                                + sensors[2] + ": " + str(temps[2]) + " deg C\n"
-                                + sensors[3] + ": " + str(temps[3]) + " deg C\n" 
-                                + "\nMEASUREMENTS: Humidity - " + name + ": \n"
-                                + sensors[0] + ": " + str(hums[0]) + " %\n" 
-                                + sensors[1] + ": " + str(hums[1]) + " %\n" 
-                                + sensors[2] + ": " + str(hums[2]) + " %\n" 
-                                + sensors[3] + ": " + str(hums[3]) + " %")
+    hums_measured = "MEASUREMENTS: Humidity - " + name +"\n"
+    temps_measured = "MEASUREMENTS: Temperature - " + name +"\n"
 
-    elif sensor == "internal":
-        temp = read_internal_temp
-        context.bot.send_message(chat_id=update.effective_chat.id,
-                                text="MEASUREMENTS: Temperature - " + name +"\n" 
-                                + sensors[0] + ": " + str(temp) + " deg C\n")
+    counter = 1
+    for sensor in sensors:
+        value = get_measurements(counter)
+        if sensor_measures[counter - 1] == "humidity":
+            hums_measured += (sensors[counter - 1] + ": " + str(value) + " %\n")
+        elif sensor_measures[counter - 1] == "temperature":
+            temps_measured += (sensors[counter - 1] + ": " + str(value) + " deg C\n")
+        counter += 1
+
+    message = ""
+
+    for item in sensor_measures:
+        if item == "temperature":
+            message += (temps_measured + "\n")
+            break
+    for item in sensor_measures:
+        if item == "humidity":
+            message += (hums_measured + "\n")
+            break
+    print(message)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
 
 def set_upper_thresh(update, context):
     ''' Set upper threshold for a sensor.
-        Format : /set_upper_threshold sensor_index new_threshold 
+        Format : /set_upper_threshold sensor_index new_threshold
         For sensor index see config file '''
     sensor = context.args[0]
     value = context.args[1]
@@ -87,7 +110,7 @@ def set_upper_thresh(update, context):
 
 def set_lower_thresh(update, context):
     ''' Set lower threshold for a sensor.
-        Format: /set_lower_threshold sensor_index new_threshold 
+        Format: /set_lower_threshold sensor_index new_threshold
         For sensor index see config file '''
     sensor = context.args[0]
     value = context.args[1]
@@ -114,7 +137,9 @@ def get_active_alarms(update, context):
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
-get_measurements_handler = CommandHandler('get_measurements', get_measurements)
+help_handler = CommandHandler('help', help_cmd)
+dispatcher.add_handler(help_handler)
+get_measurements_handler = CommandHandler('get_measurements', get_latest_measurements)
 dispatcher.add_handler(get_measurements_handler)
 set_upper_thresh_handler = CommandHandler('set_upper_threshold', set_upper_thresh)
 dispatcher.add_handler(set_upper_thresh_handler)
