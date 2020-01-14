@@ -1,4 +1,6 @@
-''' Interfaces with a rpi yaml config file '''
+''' Author: Larissa Tredoux
+
+    Interfaces with a rpi yaml config file '''
 import yaml
 
 yaml_file = "rpi.yaml"

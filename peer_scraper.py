@@ -1,4 +1,6 @@
-''' Contains a method that scrapes the prometheus
+''' Author: Larissa Tredoux
+    
+    Contains a method that scrapes the prometheus
     client page for a Raspberry Pi to check if it is
     online '''
 import urllib.request

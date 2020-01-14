@@ -1,4 +1,6 @@
-''' Checks for alarms and sends notifications if raised/cleared.
+''' Author: Larissa Tredoux
+
+    Checks for alarms and sends notifications if raised/cleared.
 
     Possible alarms:
     - Sensor down -> measurement on sensor is None

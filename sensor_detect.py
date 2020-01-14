@@ -1,4 +1,6 @@
-''' Contains all sensor-specific methods necessary '''
+''' Author: Larissa Tredoux
+
+    Contains all sensor-specific methods necessary '''
 
 from read_rpi_yaml import get_sensor_type, get_sensor_measures
 from sensors.get_internal_temps import read_internal_temp

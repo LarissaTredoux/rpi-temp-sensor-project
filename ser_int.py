@@ -1,4 +1,6 @@
-''' Serial interface between raspberry pi board and sensirion ek-h4 sensor '''
+''' Author: Larissa Tredoux
+
+    Serial interface between raspberry pi board and sensirion ek-h4 sensor '''
 
 import time
 import binascii

@@ -1,4 +1,6 @@
-''' Prometheus client for measurement metrics from sensirion ek-h4 sensor '''
+''' Author: Larissa Tredoux
+
+    Prometheus client for measurement metrics from sensirion ek-h4 sensor '''
 import time
 import threading
 
