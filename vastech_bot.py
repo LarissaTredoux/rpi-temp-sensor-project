@@ -1,5 +1,5 @@
 ''' VASTech bot to report on server room temperatures
-    bot_token = '955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA' '''
+    bot_token = # Bot token '''
 
 import logging
 import requests
@@ -10,7 +10,7 @@ import alarms
 from sensor_detect import get_measurements
 from read_rpi_yaml import get_chat_ids, get_own_name, get_sensor_names, get_sensor_measures
 
-updater = Updater(token='955626728:AAGNWD8dPJMszVhZRXvb69KVqMJTOVd7-eA', use_context=True)
+updater = Updater(token=# Bot token, use_context=True)
 dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
