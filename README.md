@@ -127,8 +127,8 @@ sensors.get_dht_temps.py | Reads temperature and humidity values from the DHT-11
 sensors.get_sensirion_temps.py | Reads temperature and humidity values from the Sensirion EK-H4 sensor
 
 ### System overview
-![Hardware Interfaces](/images/Hardware interfaces.PNG)
-![Software Interfaces](/images/software interfaces.PNG)
+![Hardware Interfaces](/images/hardint.PNG)
+![Software Interfaces](/images/softint.PNG)
 
 ### Alarms
 Current supported alarms are:
