@@ -86,7 +86,9 @@ get_active_alarms - Get a list of all alarms currently active
 
 
 ### Using an existing Telegram bot
-Bots can be used in private chats or in groups. If you want the bot to see all messages in a group (and not just the commands directed to it specifically using `@BotUsername` or replies to the bot's messages), give the bot Admin privileges. If you want the bot to be able to send you alarm messages, you will need to give the `/start` command (this happens in private chats anyway but you should do it in the group too). This will return the following message:
+Bots can be used in private chats or in groups. Search the bot's username in Telegram and either send it a `/start` message in a private chat or add it to a group to start communicating with it.
+
+If you want the bot to see all messages in a group (and not just the commands directed to it specifically using `@BotUsername` or replies to the bot's messages), give the bot Admin privileges. If you want the bot to be able to send you alarm messages, you will need to give the `/start` command (this happens in private chats anyway but you should do it in the group too). This will return the following message:
 
 ```
 Hello. I will give you information about alarms that go off for the sensors. Your chat id is [chat_id]; please add this to the config file so I can send you messages.
@@ -94,7 +96,17 @@ Hello. I will give you information about alarms that go off for the sensors. You
 
 Add the given chat id to the `rpi.yaml` config file.
 
-Remember, if you're stuck at any point you can always give the bot the `/help` command, which will give you a list of commands and their formats.
+The following table shows the full list of commands for the bot. Remember, if you're stuck at any point you can always give the bot the `/help` command, which will give you a list of commands and their formats.
+
+Command | Action
+------------ | -------------
+start | Start the bot. The response to the start command will contain the user's chat id, which should be added to the config file
+help | Get help with commands
+get_measurements | Get latest sensor measurements
+set_upper_threshold | Change the upper threshold for a sensor. Format: /set_upper_threshold sensor_index new_threshold. For sensor index see config file
+set_lower_threshold | Change the lower threshold for a sensor. Format: /set_lower_threshold sensor_index new_threshold. For sensor index see config file
+switch_off_server | Switch off a specified server. Format: /switch_off_server server_name
+get_active_alarms | Get a list of all alarms currently active
 
 
 ## Information for developers
@@ -113,6 +125,9 @@ vastech_bot.py | Contains command and message handler functions for the Telegram
 sensors.get_internal_temps.py | Reads temperatures from the Raspberry Pi's internal CPU temperature sensor
 sensors.get_dht_temps.py | Reads temperature and humidity values from the DHT-11 sensor
 sensors.get_sensirion_temps.py | Reads temperature and humidity values from the Sensirion EK-H4 sensor
+
+### System overview
+
 
 ### Alarms
 Current supported alarms are:
