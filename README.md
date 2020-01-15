@@ -97,6 +97,23 @@ Add the given chat id to the `rpi.yaml` config file.
 Remember, if you're stuck at any point you can always give the bot the `/help` command, which will give you a list of commands and their formats.
 
 
+## Information for developers
+### Project files
+File name | Purpose
+------------ | -------------
+alarms.py | Checks for alarms, updates alarm states and sends Telegram notifications when alarm states change
+peer_scraper.py | Scrapes the Prometheus Client page for a Raspberry Pi peer to check if it is online
+prom_cli.py | Maintains the Prometheus Client page. Obtains measurements from sensors periodically and calls the `alarm_check()` method for each measurement
+read_rpi_yaml.py | Interfaces with the `rpi.yaml` configuration file
+rpi.yaml | Configuration file containing information about sensors, peers and alarms
+rpiscript.service | Service file containing the script for startup on boot of the Raspberry Pi
+sensor_detect.py | Checks which sensor is being used and obtains measurements from that sensor
+ser_int.py | Contains methods for the serial interface with the Sensirion EK-H4 sensor
+vastech_bot.py | Contains command and message handler functions for the Telegram bot
+sensors.get_internal_temps.py | Reads temperatures from the Raspberry Pi's internal CPU temperature sensor
+sensors.get_dht_temps.py | Reads temperature and humidity values from the DHT-11 sensor
+sensors.get_sensirion_temps.py | Reads temperature and humidity values from the Sensirion EK-H4 sensor
+
 ### Alarms
 Current supported alarms are:
 - Peer Down - one of the peers has gone offline
@@ -122,7 +139,7 @@ To add a new alarm, you'll need to add code to check if the alarm should be acti
 ### Adding a new sensor
 You'll need to add a file called `get_[sensor_name]_[sensor_measurement].py` to the `sensors` folder. Inside this folder you should have Python code that reads measurements from your new sensor. Then you'll have to add this sensor as an option in the `sensor_detect.py` file and make sure it calls your measurement-getting function and returns the correct value.
 
-### Additional information
+### Information about sensors and peers
 The code is designed for a maximum of four sensors to be connected to one Raspberry Pi. If more than four sensors are connected, you will need to extend the length of the following arrays in the `alarms.py` file:
 
 - `oob_count` (out of bounds count - how many consecutive times each sensor has gone out of bounds. Default is 0)
@@ -131,8 +148,6 @@ The code is designed for a maximum of four sensors to be connected to one Raspbe
 - `sensor_flags` (These flags get set if an alarm goes off for a sensor. 0 means the flag is not set, 1 means the flag is set. Default is 0)
 
 Similarly, the code is designed for each Raspberry Pi to check the states of a maximum of two peers. If more than two peers need to be checked, the `peer_states_prev` array will need to be extended. This array shows the previous states of all the peers that need to be checked. 1 means the peer is up, 0 means it is down. Default is 1.
-
-## Information for developers
 
 ### Flowchart of the processes
 ![Flowchart](/images/ProjectFlow.png)
