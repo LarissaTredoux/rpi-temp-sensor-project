@@ -11,7 +11,7 @@ The functionality is as follows:
 
 This functionality is developed in Python. 
 
-## How to use the functionality
+## Installation and setup
 
 ### Setting up a new Raspberry Pi
 The Raspberry Pi should have a working internet connection. 
@@ -131,6 +131,11 @@ The code is designed for a maximum of four sensors to be connected to one Raspbe
 - `sensor_flags` (These flags get set if an alarm goes off for a sensor. 0 means the flag is not set, 1 means the flag is set. Default is 0)
 
 Similarly, the code is designed for each Raspberry Pi to check the states of a maximum of two peers. If more than two peers need to be checked, the `peer_states_prev` array will need to be extended. This array shows the previous states of all the peers that need to be checked. 1 means the peer is up, 0 means it is down. Default is 1.
+
+## Information for developers
+
+### Flowchart of the processes
+![Flowchart](/images/ProjectFlow.png)
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
