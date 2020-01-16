@@ -81,8 +81,10 @@ def get_latest_measurements(update, context):
         value = get_measurements(counter)
         if sensor_measures[counter - 1] == "humidity":
             hums_measured += (sensors[counter - 1] + ": " + str(value) + " %\n")
+            print(sensor + hums_measured)
         elif sensor_measures[counter - 1] == "temperature":
             temps_measured += (sensors[counter - 1] + ": " + str(value) + " deg C\n")
+            print(sensor + temps_measured)
         counter += 1
 
     message = ""

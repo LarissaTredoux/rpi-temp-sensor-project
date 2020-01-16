@@ -95,7 +95,7 @@ def alarm_check(sensor_values, peer_states_curr):
                     over_thresh_alarms[sensor_idx] = alarm_message # add alarm to over threshold alarms
                     send_notification("update", 0) # update over threshold alarm
         
-        elif ((sensor_value >= 100) or (sensor_value <= 0)) and oob_count[sensor_idx] < 10:
+        elif ((sensor_value >= 100) or (sensor_value <= 0)) and oob_count[sensor_idx] < 10 and (sensor_value is not None):
             oob_count[sensor_idx] += 1
             if oob_state[sensor_idx] == 0: # more than once consecutively
                 oob_state[sensor_idx] = 1
