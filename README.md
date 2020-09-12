@@ -121,7 +121,7 @@ rpi.yaml | Configuration file containing information about sensors, peers and al
 rpiscript.service | Service file containing the script for startup on boot of the Raspberry Pi
 sensor_detect.py | Checks which sensor is being used and obtains measurements from that sensor
 ser_int.py | Contains methods for the serial interface with the Sensirion EK-H4 sensor
-vastech_bot.py | Contains command and message handler functions for the Telegram bot
+notification_bot.py | Contains command and message handler functions for the Telegram bot
 sensors.get_internal_temps.py | Reads temperatures from the Raspberry Pi's internal CPU temperature sensor
 sensors.get_dht_temps.py | Reads temperature and humidity values from the DHT-11 sensor
 sensors.get_sensirion_temps.py | Reads temperature and humidity values from the Sensirion EK-H4 sensor
