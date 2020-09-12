@@ -1,6 +1,6 @@
 ''' Author: Larissa Tredoux
 
-    VASTech bot to report on server room temperatures
+    Bot to report on server room temperatures
     bot_token = # Bot token '''
 
 import logging
