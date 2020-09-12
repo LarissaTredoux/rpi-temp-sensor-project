@@ -11,7 +11,7 @@ from sensor_detect import get_measurements
 from alarms import alarm_check
 from read_rpi_yaml import get_peers, get_own_name, get_sensor_names, get_sensor_measures
 from peer_scraper import check_peer
-from vastech_bot import telegram_bot_sendtext
+from notification_bot import telegram_bot_sendtext
 
 class CustomCollector(object):
     ''' Builds a custom collector for temperature and humidity metrics '''
