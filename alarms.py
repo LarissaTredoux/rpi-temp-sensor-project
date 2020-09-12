@@ -16,7 +16,7 @@
 
 from read_rpi_yaml import get_own_name, get_sensor_clear_thresholds, get_sensor_raise_thresholds, get_peer_alarms, get_peer_alarm_names
 from read_rpi_yaml import set_sensor_raise_thresholds, set_sensor_clear_thresholds, get_sensor_alarms, get_alarm_names
-import vastech_bot
+import notification_bot
 
 oob_count = [0, 0, 0, 0] # value from 0 to 10 - number of consecutive out of bounds
 oob_state = [0, 0, 0, 0] # 0 if in bounds, 1 if out of bounds
@@ -146,7 +146,7 @@ def send_notification(alarm_action, alarm_type):
             for alarm in peer_alarms.values():
                 raise_message += "\n"
                 raise_message += alarm
-        vastech_bot.telegram_bot_sendtext(raise_message)
+        notification_bot.telegram_bot_sendtext(raise_message)
     elif alarm_action == "update":
         update_message = "ALARM-UPDATE:\n[HOST]: " + name + "\n[TYPE]: " +  alarm_names[alarm_type]
         if alarm_type == 0: # alarm update: over threshold
@@ -165,7 +165,7 @@ def send_notification(alarm_action, alarm_type):
             for alarm in peer_alarms.values():
                 update_message += "\n"
                 update_message += alarm
-        vastech_bot.telegram_bot_sendtext(update_message)
+        notification_bot.telegram_bot_sendtext(update_message)
     elif alarm_action == "clear":
         clear_message = "ALARM-CLEAR:\n[HOST]: " + name + "\n[TYPE]: " +  alarm_names[alarm_type]
         if alarm_type == 0: # alarm clear: over threshold
@@ -176,7 +176,7 @@ def send_notification(alarm_action, alarm_type):
             clear_message += "\nAll sensors are within bounds"
         elif alarm_type == 3: # alarm clear: peer downs
             clear_message += "\nAll peers are up"
-        vastech_bot.telegram_bot_sendtext(clear_message)
+        notification_bot.telegram_bot_sendtext(clear_message)
 
 
 def set_thresholds(threshold, sensor, value):
