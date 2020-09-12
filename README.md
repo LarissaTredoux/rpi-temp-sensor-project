@@ -19,7 +19,7 @@ The Raspberry Pi should have a working internet connection.
 First, you'll need to download the files onto a Raspberry Pi.
 
 ```
-$ git clone https://github.com/LarissaTredoux/vastech-rpi-project.git
+$ git clone https://github.com/LarissaTredoux/rpi-temp-sensor-project.git
 ```
 
 You'll need to install python packages for the [Telegram bot], [YAML] (`pip install pyyaml` is easiest) and [Prometheus Client].
@@ -34,7 +34,7 @@ The [Adafruit_DHT] package needs to be installed for the DHT-11 sensor. The YAML
 5 
 6  [Service]
 7  ExecStart=/usr/bin/python3 -u prom_cli.py
-8  WorkingDirectory=/home/pi/vastech-rpi-project
+8  WorkingDirectory=/home/pi/rpi-temp-sensor-project
 9  StandardOutput=inherit
 10 StandardError=inherit
 11 Restart=always
@@ -56,7 +56,7 @@ You'll also need to give your Raspberry Pi a static IP address. Then your Promet
 
 
 ### Setting up a new telegram bot
-Then, you'll need to set up a new [Telegram bot]. This should be done with the [BotFather], who will give you a token for your bot. You'll need to paste this token into the `vastech_bot.py` file wherever the comment `# Bot token` is found. The naming convention for the bots is `VASTechBotRPi#` where `#` represents the number index of the Raspberry Pi (starting at 1). The username for the bots has the convention `VASTech#Bot`. 
+Then, you'll need to set up a new [Telegram bot]. This should be done with the [BotFather], who will give you a token for your bot. You'll need to paste this token into the `notification_bot.py` file wherever the comment `# Bot token` is found.
 
 Use the command `/setdescription` in BotFather to set the description. The description of the existing bots is:
 
@@ -72,7 +72,7 @@ Bot for Raspberry Pi #. Sends alerts when alarms go off due to temperature senso
 
 `temperature` can of course be replaced with whatever your sensor measures. 
 
-You can use `/setuserpic` in BotFather to set the user pic of the bot to the VASTech logo. If you would like a commands menu for your bot to appear in Telegram when you type `/`, you can use `/setcommands` in BotFather to set the commands list to:
+You can use `/setuserpic` in BotFather to set the user pic of the bot. If you would like a commands menu for your bot to appear in Telegram when you type `/`, you can use `/setcommands` in BotFather to set the commands list to:
 
 ```
 start - Start the bot
